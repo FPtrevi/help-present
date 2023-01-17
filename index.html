@@ -5,217 +5,16 @@
             <title>js excel example 03</title>
             <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
-
-            <style>
-                .file label{
-                    display: inline-block;
-                    width: 100px;
-                    height: 45px;
-                    background-color: #4a4a4a;
-                    color: #fff;
-                    cursor: pointer;
-                    line-height: 45px;
-                    border-radius: 5px;
-                    text-align: center;
-                }
-
-                .file input{
-                    position: absolute;
-                    width: 1px;
-                    height: 1px;
-                    margin: -1px;
-                    clip: rect(0,0,0,0);
-                    overflow: hidden;
-                    padding: 0;
-                }
-
-                .checkFile{
-                    display: inline-block;
-                    width: 185px;
-                    height: 45px;
-                    background-color: #fff;
-                    color: #4a4a4a;
-                    cursor: pointer;
-                    line-height: 45px;
-                    border-radius: 5px;
-                    padding-left: 10px;
-                    border: 1px solid #4a4a4a;
-                }
-
-                .indexOfResult{
-                    width: 100%;
-                    display: flex;
-                    /* margin-left: 50px; */
-                    flex-wrap: wrap;
-                }
-
-                .showRank{
-                    height: 30px;
-                    width: 50px;
-                    background-color: #4a4a4a;
-                    text-align: center;
-                    position: absolute;
-                    line-height: 30px;
-                }
-
-                .resultList{
-                    width: 300px;
-                    border: 1px solid black;
-                    text-align: center;
-                    margin-top: 50px;
-                    /* margin-left: 50px; */
-                }
-                
-                .resultList div{
-                    margin-top: 5px;
-                }
-            </style>
+            <link rel="stylesheet" href="./css/style.css">
         </head>
         <body>
-            <script>
-                //엑셀 불러오기
-                let wantData = '' //객체
-                let keys = '';    //객체의 키값
-                function readExcel() {
-                    let input = event.target;
-                    let reader = new FileReader();
-                    reader.onload = function () {
-                        let data = reader.result;
-                        let workBook = XLSX.read(data, { type: 'binary' });
-                        workBook.SheetNames.forEach(function (sheetName) {
-                            let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
-                            wantData = rows
-                            keys = Object.keys(wantData[0]);
-                        })
-                    };
-                    reader.readAsBinaryString(input.files[0]);
-                    let checkTheFile = document.querySelector(".checkFile");
-                    checkTheFile.textContent = "준비가 완료 되었습니다."
-                }
-
-                //뽑기
-                let len = ""
-                let randomId=""
-                let randomUniversity=""
-                let randomDepartment=""
-                let getNumber=0
-
-                function getRandom1(){
-                    len = wantData.length;
-                    getNumber = Math.floor(Math.random()*len);
-                    randomId = wantData[getNumber].이름;
-                    randomUniversity = wantData[getNumber].학과;
-                    randomDepartment = wantData[getNumber].학교;
-                    wantData.splice(getNumber,1);
-                    return [randomId, randomUniversity, randomDepartment]
-                    // console.log(`${randomId}\n${randomUniversity}\n${randomDepartment}`);
-                }
-                
-                //요소 생성
-                // function allItem(i, list){
-                //     const box = document.getElementById("donation-content");
-                //     let newA = document.createElement("a");
-                //     let newDiv = document.createElement("div");
-                //     let newDiv1 = document.createElement("div");
-                //     let newDiv2 = document.createElement("div");
-                //     let newDiv3 = document.createElement("div");
-                //     let newDiv4 = document.createElement("div");
-                //     let newVisit = document.createElement("div");
-                //     let newImg = document.createElement("img");
-                //     newImg.src = list[i].img;
-                //     newA.href=list[i].http;
-
-                //     box.appendChild(newA);
-
-                //     newA.appendChild(newDiv);
-                //     newDiv.className = "item";
-
-                //     newDiv.appendChild(newDiv1);
-                //     newDiv1.className = "imge";
-                //     newDiv1.appendChild(newImg);
-
-                //     newDiv.appendChild(newDiv2);
-                //     newDiv2.className = "product";
-                //     newDiv2.innerHTML = "제품명 : "+list[i].name
-
-                //     newDiv.appendChild(newDiv3);
-                //     newDiv3.className = "price";
-                //     newDiv3.innerHTML = "가격 : "+list[i].price
-
-                //     newDiv.appendChild(newDiv4);
-                //     newDiv4.className = "where";
-                //     newDiv4.innerHTML = "후원지 : "+list[i].sponsor
-
-                //     newDiv.appendChild(newVisit);
-                //     newVisit.className = "visit";
-                //     newVisit.innerHTML = "방문하기"
-                // }
-
-                function getStart(x){
-                    let rankArray = [];
-                    let getresult= document.getElementById("result");
-                    for(let j=1; j<=x; j++){
-                        let getIdOfRank = document.getElementById(`rank${j}`).value;
-                        rankArray.push(getIdOfRank);
-                    }
-                    for(let num=0; num<rankArray.length; num++){
-                        let newIndex = document.createElement("div");
-                        let newShowRank = document.createElement("div");
-                        newIndex.className = "indexOfResult";
-                        newShowRank.className = "showRank";
-                        newShowRank.innerHTML = `${num+1}등`;
-                        
-                        getresult.appendChild(newIndex);
-                        newIndex.appendChild(newShowRank);
-                        
-                        for(let rep=0; rep<rankArray[num]; rep++){
-                            let newRList = document.createElement("div");
-                            newRList.className = "resultList";
-                            newIndex.appendChild(newRList);
-                            let newName = document.createElement("div");
-                            let newUni = document.createElement("div");
-                            let newDep = document.createElement("div");
-                            newName.className = "name";
-                            newUni.className = "uni";
-                            newDep.className = "dep";
-                            let getItem = getRandom1();
-                            newName.innerHTML = getItem[0];
-                            newUni.innerHTML = getItem[1];
-                            newDep.innerHTML = getItem[2];                            
-                            newRList.appendChild(newName);
-                            newRList.appendChild(newUni);
-                            newRList.appendChild(newDep);                            
-                        };
-                    };
-                };
-                
-                function startRank(){
-                    let importInput = document.getElementById("countRank");
-                    let inputRank = parseInt(importInput.value);
-                    let getId = document.getElementById("indexOfRank");
-                    for(let i=1; i<=inputRank; i++){
-                        let newDiv = document.createElement("div");
-                        newDiv.innerHTML = `${i}등 <input type="text" id="rank${i}">명`;
-                        newDiv.className = `rank${i}`;
-                        getId.appendChild(newDiv);
-                    };
-                    let newStart = document.createElement("Button");
-                    let newStartText = document.createTextNode('시작');
-                    newStart.appendChild(newStartText);
-                    newStart.setAttribute("onclick",`getStart(${inputRank})`)
-                    getId.appendChild(newStart);
-                }
-
-
-
-            </script>
             <div class="file">
                     <label for="file">첨부파일</label>
                 <input type="file" id="file" onchange="readExcel()">  
                 <div class="checkFile">파일 선택</div>
             </div>
-            <img src="info.png">
-            <div>
+            <img src="info.png" class="img">
+            <div id = inputRank>
                 등수 갯수 <input type="text" id="countRank" placeholder="숫자만 입력하세요">개
                 <button onclick="startRank()">확인</button>
             </div>
@@ -233,6 +32,6 @@
                     </div>
                 </div> -->
             </div>
-            
+            <script src="./js/app.js"></script>
         </body>
     </html>
